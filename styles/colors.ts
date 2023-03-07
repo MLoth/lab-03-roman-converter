@@ -1,15 +1,35 @@
+import { Appearance } from 'react-native'
+
+const neutralColors = {
+  100: '#ffffff',
+  200: '#f2f2f2',
+  300: '#e6e6e6',
+  400: '#cccccc',
+  500: '#999999',
+  600: '#666666',
+  700: '#4d4d4d',
+  800: '#333333',
+  900: '#111111',
+}
+
+const reverseColors = () => {
+  const reversed: { [key: string]: string } = {}
+  for (let i = 0; i < Object.keys(neutralColors).length; i++) {
+    reversed[Object.keys(neutralColors)[i]] =
+      Object.values(neutralColors)[Object.values(neutralColors).length - 1 - i]
+  }
+  console.log(reversed)
+
+  return reversed
+}
+
+console.log(Appearance.getColorScheme())
+
+const colors =
+  Appearance.getColorScheme() === 'dark' ? reverseColors() : neutralColors
+
 export default {
-  neutral: {
-    100: '#ffffff',
-    200: '#f2f2f2',
-    300: '#e6e6e6',
-    400: '#cccccc',
-    500: '#999999',
-    600: '#666666',
-    700: '#4d4d4d',
-    800: '#333333',
-    900: '#111111',
-  },
+  neutral: colors,
 
   primary: {
     100: '#e6f7ff',

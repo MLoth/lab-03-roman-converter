@@ -5,7 +5,7 @@ import { ConversionDetail } from '../interfaces/ConversionDetail'
 import colors from '../styles/colors'
 
 export default ({ details }: { details: ConversionDetail[] }) => {
-  if (details.length > 1) {
+  if (details.length > 0) {
     return (
       <View style={styles.container}>
         {details.map(detail => (
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '600',
+    color: colors.neutral[900],
     // fontFamily: '',
   },
 })

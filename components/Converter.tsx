@@ -1,32 +1,68 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import useRomanConversion from '../hooks/useRomanConversion'
+import { ConversionDetail } from '../interfaces/ConversionDetail'
 
 import colors from '../styles/colors'
 
 export default ({ handleDetails }: { handleDetails: Function }) => {
-  const [arabic, setArabic] = useState<number>(0)
+  const [arabic, setArabic] = useState<string>('')
+  const [output, setOutput] = useState<string>('')
+  const [hasError, setHasError] = useState<boolean>(false)
+
   const { makeArabicToRoman } = useRomanConversion()
 
+  const showOutput = (details: ConversionDetail[]) => {
+    let output = ''
+    for (const d of details) {
+      output += `${d.romanNumber.repeat(d.timesFound)}`
+    }
+    setOutput(output)
+  }
+
+  const validate = () => {
+    if (arabic === '') {
+      setOutput('Please provide a number.')
+      setHasError(true)
+    } else if (isNaN(+arabic)) {
+      setOutput('Are you stupid 😡?')
+      setHasError(true)
+    } else if (+arabic > 9999) {
+      setOutput('Number too large.')
+      setArabic(arabic.slice(0, 4))
+      calculateRoman(+arabic.slice(0, 4))
+      setHasError(true)
+    } else {
+      setHasError(false)
+    }
+  }
+
+  useEffect(() => {
+    validate()
+  }, [arabic])
+
   const calculateRoman = (arabic: number) => {
-    const details = makeArabicToRoman(arabic)
+    const details: ConversionDetail[] = makeArabicToRoman(arabic)
     handleDetails(details)
+    showOutput(details)
   }
 
   return (
     <View style={styles.container}>
       <TextInput
         keyboardType="numeric"
-        style={styles.input}
+        style={[styles.input, hasError && { borderColor: 'red', color: 'red' }]}
         placeholder="Eg. 41"
-        // value={arabic.toString()}
+        value={arabic}
         onChangeText={text => {
-          // setArabic(parseInt(text.nativeEvent.text))
+          setArabic(text)
           calculateRoman(+text)
         }}
       />
 
-      <Text style={styles.output}>XVII</Text>
+      <Text style={[styles.output, hasError && { color: 'red' }]}>
+        {output}
+      </Text>
     </View>
   )
 }
@@ -37,8 +73,9 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    backgroundColor: 'white',
+    backgroundColor: colors.neutral[100],
     borderColor: colors.neutral[400],
+    color: colors.neutral[900],
     borderWidth: 1,
     padding: 8,
     borderRadius: 8,
